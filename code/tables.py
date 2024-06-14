@@ -1,8 +1,13 @@
+from math import inf
+from datetime import datetime
 from html.parser import HTMLParser
 from urllib.request import urlopen
 
-# INSS table from website: www.gov.br
+year = str(datetime.today().year)
+
+# INSS and IRPF tables from website: www.gov.br
 INSS_SOURCE = "https://www.gov.br/inss/pt-br/direitos-e-deveres/inscricao-e-contribuicao/tabela-de-contribuicao-mensal"
+IRPF_SOURCE = "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas/" + year
 
 
 class TableParser(HTMLParser):
@@ -48,8 +53,8 @@ class TableParser(HTMLParser):
 
 
 class INSS:
-    def __init__(self) -> None:
-        self.html = self.get_source(INSS_SOURCE)
+    def __init__(self, html_page=INSS_SOURCE):
+        self.html = self.get_source(html_page)
         self.parser = TableParser()
         self.parser.feed(self.html)
         self.table = self.extract_data(self.parser.all_tables[0])
@@ -57,7 +62,7 @@ class INSS:
     def get_source(self, url):
         response = urlopen(url)
         html = response.read()
-        return html.decode("utf-8")
+        return html.decode()  # "utf-8"
 
     def extract_data(self, table):
         tb = []
@@ -79,6 +84,7 @@ class INSS:
             s = s.replace(".", "")
             s = s.replace(",", ".")
             s = s.replace("%", "")
+            s = s.replace("\xa0", " ")
             s = s.replace(" ", "-")
             sl = s.split("-")
             for element in sl:
@@ -87,6 +93,38 @@ class INSS:
                     elements_list.append(float(element))
 
 
+class IRPF(INSS):
+    def __init__(self):
+        super().__init__(html_page=IRPF_SOURCE)
+
+    def extract_data(self, table):
+        tb = []
+        for row in range(0, len(table)):
+            rw = []
+            if row == 1:
+                rw.append(0.0)
+                self.get_elements(table[row], rw)
+                rw.append(0.0)
+                rw.append(0.0)
+                tb.append(rw)
+            elif (row > 1) and (row < 5):
+                self.get_elements(table[row], rw)
+                tb.append(rw)
+            elif row == 5:
+                self.get_elements(table[row], rw)
+                rw.insert(1, inf)
+                tb.append(rw)
+        return tb
+
+
 if __name__ == "__main__":
     inss_table = INSS()
-    print(inss_table.table)
+    irpf_table = IRPF()
+
+    print("\n" + "=" * 12 + " INSS " + "=" * 12)
+    for row in inss_table.table:
+        print(row)
+
+    print("\n" + "=" * 12 + " IRPF " + "=" * 12)
+    for row in irpf_table.table:
+        print(row)
