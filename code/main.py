@@ -1,5 +1,4 @@
-import math
-from tables import INSS
+from tables import INSS, IRPF
 
 
 def CALCULO_INSS(DADOS_INSS, SB):
@@ -22,16 +21,11 @@ def CALCULO_IRPF(DADOS_IRPF, SB, inss, DP, DEP, VPA):
             return IRPF
 
 
-# fmt:off
 INSS_table = INSS()
 DADOS_INSS = INSS_table.table
 
-DADOS_IRPF = [(0.0, 2112.0, 0.0, 0.0),
-              (2112.01, 2826.65, 7.5, 158.4),
-              (2826.66, 3751.05, 15, 370.4),
-              (3751.06, 4664.68, 22.5, 651.73),
-              (4665.68, math.inf, 27.5, 884.96)]
-# fmt:on
+IRPF_table = IRPF()
+DADOS_IRPF = IRPF_table.table
 
 DEP = 189.59
 
