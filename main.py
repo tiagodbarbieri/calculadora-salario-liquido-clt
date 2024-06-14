@@ -36,13 +36,13 @@ DEP = 189.59
 
 SB = float(input("Digite o seu salário bruto: R$"))
 DP = int(input("Quantos dependentes? "))
-PA = float(input("Porcentagem peção alimenticia [%]: "))
+PA = float(input("Porcentagem pensão alimentícia [%]: "))
 OD = float(input("Outros descontos: R$"))
 
 # Calculo do o INSS
 INSS = CALCULO_INSS(DADOS_INSS, SB)
 
-# Cálculo Pensão Alimenticia
+# Cálculo Pensão Alimentícia
 VPA = 0.0
 IRPF = 0.0
 for value in range(0, 10):
@@ -62,7 +62,7 @@ SL = SB - TD
 print(f"\nSalário bruto: R${SB:.2f}")
 print(f"INSS: R${INSS:.2f}")
 print(f"IRPF: R${IRPF:.2f}")
-print(f"Pensão alimnetícia: R${VPA:.2f}")
+print(f"Pensão alimentícia: R${VPA:.2f}")
 print(f"Outros descontos: R${OD:.2f}")
 print(f"Total de descontos: R${TD:.2f}")
 print(f"\nSalário Líquido: R${SL:.2f}")
