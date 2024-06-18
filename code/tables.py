@@ -52,6 +52,31 @@ class TableParser(HTMLParser):
         return ""
 
 
+class DepParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.dep = False
+        self.value = 0.0
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "span":
+            for attr in attrs:
+                if attr[1] == "discreet":
+                    self.dep = True
+
+    def handle_endtag(self, tag):
+        if tag == "span":
+            self.dep = False
+
+    def handle_data(self, data):
+        if self.dep:
+            if "Dedução mensal por dependente:" in data:
+                pos = data.find("$") + 1
+                d = data[pos:]
+                d = d.replace(",", ".").strip()
+                self.value = float(d)
+
+
 class INSS:
     def __init__(self, html_page=INSS_SOURCE):
         self.html = self.get_source(html_page)
@@ -62,7 +87,7 @@ class INSS:
     def get_source(self, url):
         response = urlopen(url)
         html = response.read()
-        return html.decode()  # "utf-8"
+        return html.decode("utf-8")
 
     def extract_data(self, table):
         tb = []
@@ -117,9 +142,23 @@ class IRPF(INSS):
         return tb
 
 
+class DEP:
+    def __init__(self, html_page=IRPF_SOURCE):
+        self.html = self.get_source(html_page)
+        self.parser = DepParser()
+        self.parser.feed(self.html)
+        self.value = self.parser.value
+
+    def get_source(self, url):
+        response = urlopen(url)
+        html = response.read()
+        return html.decode("utf-8")
+
+
 if __name__ == "__main__":
     inss_table = INSS()
     irpf_table = IRPF()
+    dependent_data = DEP()
 
     print("\n" + "=" * 12 + " INSS " + "=" * 12)
     for row in inss_table.table:
@@ -128,3 +167,6 @@ if __name__ == "__main__":
     print("\n" + "=" * 12 + " IRPF " + "=" * 12)
     for row in irpf_table.table:
         print(row)
+
+    print("\n" + "=" * 12 + " DEP " + "=" * 12)
+    print(f"R$ {dependent_data.value}")

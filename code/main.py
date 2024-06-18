@@ -1,4 +1,4 @@
-from tables import INSS, IRPF
+from tables import INSS, IRPF, DEP
 
 
 def CALCULO_INSS(DADOS_INSS, SB):
@@ -27,7 +27,8 @@ DADOS_INSS = INSS_table.table
 IRPF_table = IRPF()
 DADOS_IRPF = IRPF_table.table
 
-DEP = 189.59
+dependent = DEP()
+DEP = dependent.value
 
 SB = float(input("Digite o seu salário bruto: R$"))
 DP = int(input("Quantos dependentes? "))
