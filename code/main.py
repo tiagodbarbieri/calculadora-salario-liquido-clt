@@ -40,17 +40,17 @@ inss = CALCULO_INSS(DADOS_INSS, SB)
 
 # Cálculo Pensão Alimentícia
 VPA = 0.0
-irpf = 0.0
+IRPF = 0.0
 for value in range(0, 10):
     # Calculo do IRPF
     IRPF = CALCULO_IRPF(DADOS_IRPF, SB, inss, DP, DEP, VPA)
     # Salário Líquido Parcial
-    SLP = SB - inss - irpf
+    SLP = SB - inss - IRPF
     # Valor pensão alimentícia
     VPA = SLP * (PA / 100)
 
 # Total de descontos
-TD = inss + irpf + VPA + OD
+TD = inss + IRPF + VPA + OD
 
 # Cálculo Salário Líquido
 SL = SB - TD
