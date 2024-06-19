@@ -1,4 +1,4 @@
-from tables import INSS, IRPF, DEP
+from data import INSS, IRPF, DEP
 
 
 def CALCULO_INSS(DADOS_INSS, SB):

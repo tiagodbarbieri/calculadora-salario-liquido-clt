@@ -1,4 +1,4 @@
-from tables import INSS, IRPF, DEP
+from data import INSS, IRPF, DEP
 
 
 class Calculator:
