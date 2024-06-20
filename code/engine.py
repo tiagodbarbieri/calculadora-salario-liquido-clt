@@ -4,10 +4,10 @@ from data import INSS, IRPF, DEP
 class Calculator:
     def __init__(self, salary=0.0, dependents=0, pension_percentage=0.0, other_discounts=0.0):
         # Inputs
-        self.salary = salary
-        self.dependents = dependents
-        self.pension_percentage = pension_percentage
-        self.other_discounts = other_discounts
+        self.salary: float = salary
+        self.dependents: int = dependents
+        self.pension_percentage: float = pension_percentage
+        self.other_discounts: float = other_discounts
 
         # Get INSS table from web
         self.inss_data = INSS()
