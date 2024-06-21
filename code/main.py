@@ -31,41 +31,26 @@ class MyEntry(ttk.Frame):
 
     def check_int(self, value: str) -> bool:
         if value == "":
-            self.value = 0
-            self.msg = ""
-            self.label_msg.configure(text=self.msg)
-            self.status = True
-            return self.status
+            return self.fill_variables()
         elif value.strip().isnumeric():
-            self.value = int(value.strip())
-            self.msg = ""
-            self.label_msg.configure(text=self.msg)
-            self.status = True
-            return self.status
+            return self.fill_variables(int(value.strip()))
         else:
-            self.msg = "<- deve ser inteiro!"
-            self.label_msg.configure(text=self.msg)
-            self.status = False
-            return self.status
+            return self.fill_variables(msg="<- deve ser inteiro!", status=False)
 
     def check_float(self, value) -> bool:
         if value == "":
-            self.value = 0.0
-            self.msg = ""
-            self.label_msg.configure(text=self.msg)
-            self.status = True
-            return self.status
+            return self.fill_variables()
         elif value.strip().replace(",", "").replace(".", "").isnumeric():
-            self.value = float(value.strip().replace(",", "."))
-            self.msg = ""
-            self.label_msg.configure(text=self.msg)
-            self.status = True
-            return self.status
+            return self.fill_variables(float(value.strip().replace(",", ".")))
         else:
-            self.msg = "<- número inválido!"
-            self.label_msg.configure(text=self.msg)
-            self.status = False
-            return self.status
+            return self.fill_variables(msg="<- número inválido!", status=False)
+
+    def fill_variables(self, value=0, msg="", status=True) -> bool:
+        self.value = value
+        self.msg = msg
+        self.label_msg.configure(text=self.msg)
+        self.status = status
+        return self.status
 
     def clear(self):
         self.value = 0
