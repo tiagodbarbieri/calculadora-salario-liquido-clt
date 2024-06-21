@@ -9,16 +9,18 @@ class MyEntry(ttk.Frame):
         self.type = type
         self.value: int | float = 0
         self.msg = ""
-        self.status = False
+        self.status = True
 
         # Label - text
         self.label_text = ttk.Label(master=self, text=text)
         self.label_text.grid(column=0, row=0, sticky="e", padx=5, pady=5)
         # Entry
-        self.entry = ttk.Entry(master=self, width=10, validate="focusout", validatecommand=self.function_select)
+        self.entry = ttk.Entry(
+            master=self, width=10, justify="right", validate="focusout", validatecommand=self.function_select
+        )
         self.entry.grid(column=1, row=0)
         # Label - message
-        self.label_msg = ttk.Label(master=self, text=self.msg, width=16, foreground="red")
+        self.label_msg = ttk.Label(master=self, text=self.msg, width=18, foreground="red")
         self.label_msg.grid(column=3, row=0, sticky="w", padx=5, pady=5)
 
     def function_select(self) -> bool:
