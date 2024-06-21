@@ -7,8 +7,10 @@ class MyEntry(ttk.Frame):
     def __init__(self, master, text, type: int | float):
         super().__init__(master=master)
         self.type = type
+        self.value: int | float = 0
         self.msg = ""
         self.status = False
+
         # Label - text
         self.label_text = ttk.Label(master=self, text=text)
         self.label_text.grid(column=0, row=0, sticky="e", padx=5, pady=5)
@@ -19,35 +21,49 @@ class MyEntry(ttk.Frame):
         self.label_msg = ttk.Label(master=self, text=self.msg, width=16, foreground="red")
         self.label_msg.grid(column=3, row=0, sticky="w", padx=5, pady=5)
 
-    def check_int(self, value: str) -> bool:
-        if value.strip().isnumeric() or value == "":
-            self.status = True
-            self.msg = ""
-            self.label_msg.configure(text=self.msg)
-            return True
-        else:
-            self.status = False
-            self.msg = "<- deve ser inteiro!"
-            self.label_msg.configure(text=self.msg)
-            return False
-
-    def check_float(self, value) -> bool:
-        if value.strip().replace(",", "").replace(".", "").isnumeric() or value == "":
-            self.status = True
-            self.msg = ""
-            self.label_msg.configure(text=self.msg)
-            return True
-        else:
-            self.status = False
-            self.msg = "<- número inválido!"
-            self.label_msg.configure(text=self.msg)
-            return False
-
     def function_select(self) -> bool:
         if self.type == int:
             return self.check_int(self.entry.get())
         elif self.type == float:
             return self.check_float(self.entry.get())
+
+    def check_int(self, value: str) -> bool:
+        if value == "":
+            self.value = 0
+            self.msg = ""
+            self.label_msg.configure(text=self.msg)
+            self.status = False
+            return self.status
+        elif value.strip().isnumeric():
+            self.value = int(value.strip())
+            self.msg = ""
+            self.label_msg.configure(text=self.msg)
+            self.status = True
+            return self.status
+        else:
+            self.msg = "<- deve ser inteiro!"
+            self.label_msg.configure(text=self.msg)
+            self.status = False
+            return self.status
+
+    def check_float(self, value) -> bool:
+        if value == "":
+            self.value = 0.0
+            self.msg = ""
+            self.label_msg.configure(text=self.msg)
+            self.status = False
+            return self.status
+        elif value.strip().replace(",", "").replace(".", "").isnumeric():
+            self.value = float(value.strip().replace(",", "."))
+            self.msg = ""
+            self.label_msg.configure(text=self.msg)
+            self.status = True
+            return self.status
+        else:
+            self.msg = "<- número inválido!"
+            self.label_msg.configure(text=self.msg)
+            self.status = False
+            return self.status
 
 
 class Window(Tk):
@@ -60,20 +76,20 @@ class Window(Tk):
         self.title("Calculadora salário líquido CLT")
 
         # Label and Entry 01 - salary [R$]
-        self.entry_02 = MyEntry(self, "Salário bruto R$", float)
-        self.entry_02.grid(column=0, row=0, sticky="e", columnspan=3)
+        self.entry_01 = MyEntry(self, "Salário bruto R$", float)
+        self.entry_01.grid(column=0, row=0, sticky="e", columnspan=3)
 
         # Label and Entry 02 - dependents [qty]
         self.entry_02 = MyEntry(self, "Dependentes", int)
         self.entry_02.grid(column=0, row=1, sticky="e", columnspan=3)
 
         # Label and Entry 03 - pension percentage [%]
-        self.entry_02 = MyEntry(self, "Pensão [%]", float)
-        self.entry_02.grid(column=0, row=2, sticky="e", columnspan=3)
+        self.entry_03 = MyEntry(self, "Pensão [%]", float)
+        self.entry_03.grid(column=0, row=2, sticky="e", columnspan=3)
 
         # Label and Entry 04 - other discounts [R$]
-        self.entry_02 = MyEntry(self, "Outros descontos R$", float)
-        self.entry_02.grid(column=0, row=3, sticky="e", columnspan=3)
+        self.entry_04 = MyEntry(self, "Outros descontos R$", float)
+        self.entry_04.grid(column=0, row=3, sticky="e", columnspan=3)
 
         # Button 01 - Save
         self.btn_save = ttk.Button(self, text="Salvar", width=15, command=self.save)
@@ -97,8 +113,12 @@ class Window(Tk):
         pass
 
     def calculate(self):
-        self.engine.calculate()
-        self.report()
+        if self.validate():
+            self.engine.calculate()
+            self.report()
+
+    def validate(self) -> bool:
+        return True
 
     def report(self):
         print("=" * 50)
