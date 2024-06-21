@@ -32,7 +32,7 @@ class MyEntry(ttk.Frame):
             self.value = 0
             self.msg = ""
             self.label_msg.configure(text=self.msg)
-            self.status = False
+            self.status = True
             return self.status
         elif value.strip().isnumeric():
             self.value = int(value.strip())
@@ -51,7 +51,7 @@ class MyEntry(ttk.Frame):
             self.value = 0.0
             self.msg = ""
             self.label_msg.configure(text=self.msg)
-            self.status = False
+            self.status = True
             return self.status
         elif value.strip().replace(",", "").replace(".", "").isnumeric():
             self.value = float(value.strip().replace(",", "."))
