@@ -65,6 +65,12 @@ class MyEntry(ttk.Frame):
             self.status = False
             return self.status
 
+    def clear(self):
+        self.value = 0
+        self.msg = ""
+        self.label_msg.configure(text=self.msg)
+        self.entry.delete(0, "end")
+
 
 class Window(Tk):
     def __init__(self):
@@ -110,14 +116,31 @@ class Window(Tk):
         pass
 
     def clear(self):
-        pass
+        self.entry_01.clear()
+        self.entry_02.clear()
+        self.entry_03.clear()
+        self.entry_04.clear()
 
     def calculate(self):
         if self.validate():
+            # Input values
+            self.engine.salary = self.entry_01.value
+            self.engine.dependents = self.entry_02.value
+            self.engine.pension_percentage = self.entry_03.value
+            self.engine.other_discounts = self.entry_04.value
+            # Start calculation
             self.engine.calculate()
             self.report()
 
     def validate(self) -> bool:
+        status = []
+        status.append(self.entry_01.status)
+        status.append(self.entry_02.status)
+        status.append(self.entry_03.status)
+        status.append(self.entry_04.status)
+        for valid in status:
+            if not valid:
+                return False
         return True
 
     def report(self):
