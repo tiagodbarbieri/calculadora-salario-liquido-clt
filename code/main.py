@@ -1,6 +1,13 @@
 from engine import Calculator
 from tkinter import Tk
 from tkinter import ttk
+from re import compile
+
+# Regular expression for integer numbers
+INT_PATTERN = compile(r"^[0-9]+$")
+
+# Regular expression for float numbers
+FLOAT_PATTERN = compile(r"^[0-9]*[\.|,]?[0-9]+$")
 
 REPORT_TEXT = """
 INSS:...........................R$
@@ -42,15 +49,15 @@ class MyEntry(ttk.Frame):
     def check_int(self, value: str) -> bool:
         if value == "":
             return self.fill_variables()
-        elif value.strip().isnumeric():
+        elif INT_PATTERN.match(value.strip()):
             return self.fill_variables(int(value.strip()))
         else:
             return self.fill_variables(msg="<- deve ser inteiro!", status=False)
 
-    def check_float(self, value) -> bool:
+    def check_float(self, value: str) -> bool:
         if value == "":
             return self.fill_variables()
-        elif value.strip().replace(",", "").replace(".", "").isnumeric():
+        elif FLOAT_PATTERN.match(value.strip()):
             return self.fill_variables(float(value.strip().replace(",", ".")))
         else:
             return self.fill_variables(msg="<- número inválido!", status=False)
