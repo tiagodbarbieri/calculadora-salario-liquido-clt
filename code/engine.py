@@ -56,10 +56,13 @@ class Calculator:
 
     def irpf_calculation(self):
         base_salary = self.salary - self.inss_value - (self.dependents * self.dependent_value) - self.pension_value
-        for line in self.irpf_table:
-            if base_salary >= line[0] and base_salary <= line[1]:
-                irpf = base_salary * (line[2] / 100) - line[3]
-                return irpf
+        if base_salary > 0:
+            for line in self.irpf_table:
+                if base_salary >= line[0] and base_salary <= line[1]:
+                    irpf = base_salary * (line[2] / 100) - line[3]
+                    return irpf
+        else:
+            return 0
 
 
 if __name__ == "__main__":
