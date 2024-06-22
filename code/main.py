@@ -2,6 +2,16 @@ from engine import Calculator
 from tkinter import Tk
 from tkinter import ttk
 
+REPORT_TEXT = """
+INSS:...........................R$
+IRPF:...........................R$
+Pensão alimentícia:...R$
+Outros descontos:.....R$
+-----------------------------------
+Total de descontos:...R$
+Salário Líquido:..........R$
+"""
+
 
 class MyEntry(ttk.Frame):
     def __init__(self, master, text, type: int | float):
@@ -52,7 +62,7 @@ class MyEntry(ttk.Frame):
         self.status = status
         return self.status
 
-    def clear(self):
+    def clear(self) -> None:
         self.value = 0
         self.msg = ""
         self.label_msg.configure(text=self.msg)
@@ -67,6 +77,7 @@ class Window(Tk):
         # Main Window
         super().__init__()
         self.title("Calculadora salário líquido CLT")
+        self.resizable(False, False)
 
         # Label and Entry 01 - salary [R$]
         self.entry_01 = MyEntry(self, "Salário bruto R$", float)
@@ -84,22 +95,30 @@ class Window(Tk):
         self.entry_04 = MyEntry(self, "Outros descontos R$", float)
         self.entry_04.grid(column=0, row=3, sticky="e", columnspan=3)
 
+        # Label report
+        self.frame_label = ttk.Frame(self, border=1, relief="solid")
+        self.frame_label.grid(column=0, row=4, columnspan=3, padx=20, pady=10, sticky="ew")
+        self.lbl_report_01 = ttk.Label(self.frame_label, width=20, text=REPORT_TEXT, justify="center")
+        self.lbl_report_01.grid(column=0, row=0, padx=5, pady=5)
+        self.lbl_report_02 = ttk.Label(self.frame_label, text=self.report(), justify="right")
+        self.lbl_report_02.grid(column=1, row=0, padx=5, pady=5)
+
         # Button 01 - Save
         self.btn_save = ttk.Button(self, text="Salvar", width=15, command=self.save)
-        self.btn_save.grid(column=0, row=4, padx=5, pady=5)
+        self.btn_save.grid(column=0, row=5, padx=5, pady=5)
 
         # Button 02 - Clear
         self.btn_clear = ttk.Button(self, text="Limpar", width=15, command=self.clear)
-        self.btn_clear.grid(column=1, row=4, padx=5, pady=5)
+        self.btn_clear.grid(column=1, row=5, padx=5, pady=5)
 
         # Button 03 - Calculate
         self.btn_calculate = ttk.Button(self, text="Calcular", width=15, command=self.calculate)
-        self.btn_calculate.grid(column=2, row=4, padx=5, pady=5)
+        self.btn_calculate.grid(column=2, row=5, padx=5, pady=5)
 
         # Loop window
         self.mainloop()
 
-    def save(self):
+    def save(self) -> None:
         pass
 
     def clear(self):
@@ -108,7 +127,7 @@ class Window(Tk):
         self.entry_03.clear()
         self.entry_04.clear()
 
-    def calculate(self):
+    def calculate(self) -> None:
         if self.validate():
             # Input values
             self.engine.salary = self.entry_01.value
@@ -117,7 +136,7 @@ class Window(Tk):
             self.engine.other_discounts = self.entry_04.value
             # Start calculation
             self.engine.calculate()
-            self.report()
+            self.lbl_report_02.configure(text=self.report())
 
     def validate(self) -> bool:
         status = []
@@ -130,16 +149,17 @@ class Window(Tk):
                 return False
         return True
 
-    def report(self):
-        print("=" * 50)
-        print(f"\nSalário bruto: R${self.engine.salary:.2f}")
-        print(f"INSS: R${self.engine.inss_value:.2f}")
-        print(f"IRPF: R${self.engine.irpf_value:.2f}")
-        print(f"Pensão alimentícia: R${self.engine.pension_value:.2f}")
-        print(f"Outros descontos: R${self.engine.other_discounts:.2f}")
-        print(f"Total de descontos: R${self.engine.total_discounts:.2f}")
-        print(f"Salário Líquido: R${self.engine.net_salary:.2f}\n")
-        print("=" * 50)
+    def report(self) -> tuple[str]:
+        # fmt: off
+        t1 = (f"\n{self.engine.inss_value:.2f}\n")
+        t2 = (f"{self.engine.irpf_value:.2f}\n")
+        t3 = (f"{self.engine.pension_value:.2f}\n")
+        t4 = (f"{self.engine.other_discounts:.2f}\n")
+        t5 = (("-" * 15) + "\n")
+        t6 = (f"{self.engine.total_discounts:.2f}\n")
+        t7 = (f"{self.engine.net_salary:.2f}\n")
+        # fmt: on
+        return t1 + t2 + t3 + t4 + t5 + t6 + t7
 
 
 if __name__ == "__main__":
