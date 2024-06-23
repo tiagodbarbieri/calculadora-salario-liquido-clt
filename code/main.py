@@ -1,6 +1,7 @@
 from engine import Calculator
 from tkinter import Tk
 from tkinter import ttk
+from tkinter import filedialog
 from re import compile
 
 # Regular expression for integer numbers
@@ -126,7 +127,26 @@ class Window(Tk):
         self.mainloop()
 
     def save(self) -> None:
-        pass
+        file_name = filedialog.asksaveasfilename(
+            defaultextension=".txt", title="Salvar como", filetypes=(("Text Files", "*.txt"), ("All Files", "*.*"))
+        )
+        if file_name:
+            report = []
+            report.append("+-----------------------------------+\n")
+            report.append("|             RELATÓRIO             |\n")
+            report.append("+-----------------------------------+\n")
+            report.append(f"| Salário bruto........R${self.engine.salary:>10.2f} |\n")
+            report.append(f"| INSS.................R${self.engine.inss_value:>10.2f} |\n")
+            report.append(f"| IRPF.................R${self.engine.irpf_value:>10.2f} |\n")
+            report.append(f"| Pensão alimentícia...R${self.engine.pension_value:>10.2f} |\n")
+            report.append(f"| Outros descontos.....R${self.engine.other_discounts:>10.2f} |\n")
+            report.append("+-----------------------------------+\n")
+            report.append(f"| Total de descontos...R${self.engine.total_discounts:>10.2f} |\n")
+            report.append(f"| Salário Liquido......R${self.engine.net_salary:>10.2f} |\n")
+            report.append("+-----------------------------------+")
+            with open(file_name, "w") as r:
+                for line in report:
+                    r.write(line)
 
     def clear(self):
         self.entry_01.clear()
