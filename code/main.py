@@ -176,7 +176,7 @@ class Window(Tk):
                 return False
         return True
 
-    def report(self) -> tuple[str]:
+    def report(self) -> str:
         # fmt: off
         t1 = (f"\n{self.engine.inss_value:.2f}\n")
         t2 = (f"{self.engine.irpf_value:.2f}\n")
