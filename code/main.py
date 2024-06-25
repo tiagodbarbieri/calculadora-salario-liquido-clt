@@ -116,22 +116,28 @@ class Window(Tk):
         # Label and Entry 01 - salary [R$]
         self.entry_01 = MyEntry(self.frame_entries, "Salário bruto R$", float)
         self.entry_01.grid(column=0, row=0, sticky="e")
+        self.entry_01.entry.bind("<FocusOut>", self.update_msg)
 
         # Label and Entry 02 - dependents [qty]
         self.entry_02 = MyEntry(self.frame_entries, "Dependentes", int)
         self.entry_02.grid(column=0, row=1, sticky="e")
+        self.entry_02.entry.bind("<FocusOut>", self.update_msg)
 
         # Label and Entry 03 - pension percentage [%]
         self.entry_03 = MyEntry(self.frame_entries, "Pensão [%]", float)
         self.entry_03.grid(column=0, row=2, sticky="e")
+        self.entry_03.entry.bind("<FocusOut>", self.update_msg)
 
         # Label and Entry 04 - other discounts [R$]
         self.entry_04 = MyEntry(self.frame_entries, "Outros descontos R$", float)
         self.entry_04.grid(column=0, row=3, sticky="e")
+        self.entry_04.entry.bind("<FocusOut>", self.update_msg)
 
         ###############################################################################################################
         # Label for messages
-        self.lbl_msgs = Label(self, justify="center", text="Dados carregados com sucesso!", width=30, height=2)
+        self.lbl_msgs = Label(
+            self, justify="center", text="Dados carregados com sucesso!", foreground="blue", width=30, height=2
+        )
         self.lbl_msgs.grid(column=0, row=1, pady=5, sticky="we")
 
         ###############################################################################################################
@@ -198,6 +204,7 @@ class Window(Tk):
         self.entry_02.clear()
         self.entry_03.clear()
         self.entry_04.clear()
+        self.lbl_msgs.configure(text="")
 
     def calculate(self) -> None:
         if self.validate():
@@ -221,7 +228,7 @@ class Window(Tk):
                 return False
         return True
 
-    def report(self) -> tuple[str]:
+    def report(self) -> str:
         # fmt: off
         t1 = (f"{self.engine.inss_value:.2f}\n")
         t2 = (f"{self.engine.irpf_value:.2f}\n")
@@ -232,6 +239,19 @@ class Window(Tk):
         t7 = (f"{self.engine.net_salary:.2f}")
         # fmt: on
         return t1 + t2 + t3 + t4 + t5 + t6 + t7
+
+    def update_msg(self, event) -> None:
+        data = []
+        data.append((self.entry_01.status, self.entry_01.msg))
+        data.append((self.entry_02.status, self.entry_02.msg))
+        data.append((self.entry_03.status, self.entry_03.msg))
+        data.append((self.entry_04.status, self.entry_04.msg))
+        for info in data:
+            if not info[0]:
+                self.lbl_msgs.configure(text=info[1], foreground="red")
+                break
+            else:
+                self.lbl_msgs.configure(text="")
 
 
 if __name__ == "__main__":
