@@ -93,6 +93,7 @@ class MyEntry(Frame):
     def clear(self) -> None:
         self.value = 0
         self.msg = ""
+        self.status = True
         self.entry.configure(background="white")
         self.entry.delete(0, "end")
 
