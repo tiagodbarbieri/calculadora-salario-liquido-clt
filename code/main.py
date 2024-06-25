@@ -1,8 +1,14 @@
 from engine import Calculator
-from tkinter import Tk
-from tkinter import ttk
-from tkinter import filedialog
 from re import compile
+
+from tkinter import filedialog
+from tkinter import Button
+from tkinter import Entry
+from tkinter import Frame
+from tkinter import Label
+from tkinter import Tk
+
+# from tkinter import ttk
 
 # Regular expression for integer numbers
 INT_PATTERN = compile(r"^[0-9]+$")
@@ -15,13 +21,22 @@ INSS:...........................R$
 IRPF:...........................R$
 Pensão alimentícia:...R$
 Outros descontos:.....R$
------------------------------------
+-------------------------------------
 Total de descontos:...R$
 Salário Líquido:..........R$
 """
 
 
-class MyEntry(ttk.Frame):
+class MyButton(Button):
+    def __init__(self, master, text=None, width=None, command=None):
+        super().__init__(master=master, text=text, width=width, command=command)
+        self.bind("<Button-1>", self.focus_in)
+
+    def focus_in(self, event):
+        self.focus()
+
+
+class MyEntry(Frame):
     def __init__(self, master, text, type: int | float):
         super().__init__(master=master)
         self.type = type
@@ -29,17 +44,19 @@ class MyEntry(ttk.Frame):
         self.msg = ""
         self.status = True
 
-        # Label - text
-        self.label_text = ttk.Label(master=self, text=text)
+        # Label for text
+        self.label_text = Label(master=self, text=text)
         self.label_text.grid(column=0, row=0, sticky="e", padx=5, pady=5)
-        # Entry
-        self.entry = ttk.Entry(
-            master=self, width=10, justify="right", validate="focusout", validatecommand=self.function_select
+        # Entry for values
+        self.entry = Entry(
+            master=self,
+            width=10,
+            background="white",
+            justify="right",
+            validate="focusout",
+            validatecommand=self.function_select,
         )
         self.entry.grid(column=1, row=0)
-        # Label - message
-        self.label_msg = ttk.Label(master=self, text=self.msg, width=18, foreground="red")
-        self.label_msg.grid(column=3, row=0, sticky="w", padx=5, pady=5)
 
     def function_select(self) -> bool:
         if self.type == int:
@@ -53,7 +70,7 @@ class MyEntry(ttk.Frame):
         elif INT_PATTERN.match(value.strip()):
             return self.fill_variables(int(value.strip()))
         else:
-            return self.fill_variables(msg="<- deve ser inteiro!", status=False)
+            return self.fill_variables(msg="O número deve ser inteiro!", status=False)
 
     def check_float(self, value: str) -> bool:
         if value == "":
@@ -61,19 +78,22 @@ class MyEntry(ttk.Frame):
         elif FLOAT_PATTERN.match(value.strip()):
             return self.fill_variables(float(value.strip().replace(",", ".")))
         else:
-            return self.fill_variables(msg="<- número inválido!", status=False)
+            return self.fill_variables(msg="Este número é inválido!", status=False)
 
     def fill_variables(self, value=0, msg="", status=True) -> bool:
         self.value = value
         self.msg = msg
-        self.label_msg.configure(text=self.msg)
         self.status = status
-        return self.status
+        if status:
+            self.entry.configure(background="white")
+        else:
+            self.entry.configure(background="yellow")
+        return status
 
     def clear(self) -> None:
         self.value = 0
         self.msg = ""
-        self.label_msg.configure(text=self.msg)
+        self.entry.configure(background="white")
         self.entry.delete(0, "end")
 
 
@@ -87,41 +107,65 @@ class Window(Tk):
         self.title("Calculadora salário líquido CLT")
         self.resizable(False, False)
 
+        ###############################################################################################################
+        # Frame for MyEntries
+        self.frame_entries = Frame(self)
+        self.frame_entries.grid(column=0, row=0, padx=10, pady=5, sticky="e")
+
         # Label and Entry 01 - salary [R$]
-        self.entry_01 = MyEntry(self, "Salário bruto R$", float)
-        self.entry_01.grid(column=0, row=0, sticky="e", columnspan=3)
+        self.entry_01 = MyEntry(self.frame_entries, "Salário bruto R$", float)
+        self.entry_01.grid(column=0, row=0, sticky="e")
 
         # Label and Entry 02 - dependents [qty]
-        self.entry_02 = MyEntry(self, "Dependentes", int)
-        self.entry_02.grid(column=0, row=1, sticky="e", columnspan=3)
+        self.entry_02 = MyEntry(self.frame_entries, "Dependentes", int)
+        self.entry_02.grid(column=0, row=1, sticky="e")
 
         # Label and Entry 03 - pension percentage [%]
-        self.entry_03 = MyEntry(self, "Pensão [%]", float)
-        self.entry_03.grid(column=0, row=2, sticky="e", columnspan=3)
+        self.entry_03 = MyEntry(self.frame_entries, "Pensão [%]", float)
+        self.entry_03.grid(column=0, row=2, sticky="e")
 
         # Label and Entry 04 - other discounts [R$]
-        self.entry_04 = MyEntry(self, "Outros descontos R$", float)
-        self.entry_04.grid(column=0, row=3, sticky="e", columnspan=3)
+        self.entry_04 = MyEntry(self.frame_entries, "Outros descontos R$", float)
+        self.entry_04.grid(column=0, row=3, sticky="e")
 
-        # Label report
-        self.frame_label = ttk.Frame(self, border=1, relief="solid")
-        self.frame_label.grid(column=0, row=4, columnspan=3, padx=20, pady=10, sticky="ew")
-        self.lbl_report_01 = ttk.Label(self.frame_label, width=20, text=REPORT_TEXT, justify="center")
-        self.lbl_report_01.grid(column=0, row=0, padx=5, pady=5)
-        self.lbl_report_02 = ttk.Label(self.frame_label, text=self.report(), justify="right")
-        self.lbl_report_02.grid(column=1, row=0, padx=5, pady=5)
+        ###############################################################################################################
+        # Label for messages
+        self.lbl_msgs = Label(self, justify="center", text="Dados carregados com sucesso!", width=30, height=2)
+        self.lbl_msgs.grid(column=0, row=1, pady=5, sticky="we")
+
+        ###############################################################################################################
+        # Frame for report outside
+        self.frame_report_out = Frame(self, border=2, relief="groove")
+        self.frame_report_out.grid(column=0, row=2, padx=10, pady=5)
+
+        # Frame for report inside
+        self.frame_report_in = Frame(self.frame_report_out)
+        self.frame_report_in.grid(column=0, row=0, padx=15, pady=0)
+
+        # Label report left side
+        self.lbl_report_01 = Label(self.frame_report_in, text=REPORT_TEXT, justify="left")
+        self.lbl_report_01.grid(column=0, row=0, padx=0, pady=0)
+
+        # Label report right side
+        self.lbl_report_02 = Label(self.frame_report_in, text=self.report(), justify="right")
+        self.lbl_report_02.grid(column=1, row=0, padx=0, pady=0)
+
+        ###############################################################################################################
+        # Frame for buttons
+        self.frame_buttons = Frame(self)
+        self.frame_buttons.grid(column=0, row=3, padx=10, pady=10)
 
         # Button 01 - Save
-        self.btn_save = ttk.Button(self, text="Salvar", width=15, command=self.save)
-        self.btn_save.grid(column=0, row=5, padx=5, pady=5)
+        self.btn_save = MyButton(self.frame_buttons, text="Salvar", command=self.save)
+        self.btn_save.grid(column=0, row=0, padx=1, pady=1, sticky="we")
 
         # Button 02 - Clear
-        self.btn_clear = ttk.Button(self, text="Limpar", width=15, command=self.clear)
-        self.btn_clear.grid(column=1, row=5, padx=5, pady=5)
+        self.btn_clear = MyButton(self.frame_buttons, text="Limpar", command=self.clear)
+        self.btn_clear.grid(column=1, row=0, padx=1, pady=1, sticky="we")
 
         # Button 03 - Calculate
-        self.btn_calculate = ttk.Button(self, text="Calcular", width=15, command=self.calculate)
-        self.btn_calculate.grid(column=2, row=5, padx=5, pady=5)
+        self.btn_calculate = MyButton(self.frame_buttons, text="Calcular", command=self.calculate, width=30)
+        self.btn_calculate.grid(column=0, row=1, padx=1, pady=1, columnspan=2)
 
         # Loop window
         self.mainloop()
@@ -178,13 +222,13 @@ class Window(Tk):
 
     def report(self) -> tuple[str]:
         # fmt: off
-        t1 = (f"\n{self.engine.inss_value:.2f}\n")
+        t1 = (f"{self.engine.inss_value:.2f}\n")
         t2 = (f"{self.engine.irpf_value:.2f}\n")
         t3 = (f"{self.engine.pension_value:.2f}\n")
         t4 = (f"{self.engine.other_discounts:.2f}\n")
         t5 = (("-" * 15) + "\n")
         t6 = (f"{self.engine.total_discounts:.2f}\n")
-        t7 = (f"{self.engine.net_salary:.2f}\n")
+        t7 = (f"{self.engine.net_salary:.2f}")
         # fmt: on
         return t1 + t2 + t3 + t4 + t5 + t6 + t7
 
