@@ -6,6 +6,7 @@ from tkinter import Button
 from tkinter import Entry
 from tkinter import Frame
 from tkinter import Label
+from tkinter import messagebox
 from tkinter import Tk
 
 # from tkinter import ttk
@@ -101,81 +102,86 @@ class MyEntry(Frame):
 class Window(Tk):
     def __init__(self):
         # Creating calculator
-        self.engine = Calculator()
+        try:
+            self.engine = Calculator()
+        except:
+            messagebox.showerror(
+                "Erro!", "O website www.gov.br não está acessível, verifique sua internet e reinicie a aplicação!"
+            )
+        else:
+            # Main Window
+            super().__init__()
+            self.title("Calculadora salário líquido CLT")
+            self.resizable(False, False)
 
-        # Main Window
-        super().__init__()
-        self.title("Calculadora salário líquido CLT")
-        self.resizable(False, False)
+            ###############################################################################################################
+            # Frame for MyEntries
+            self.frame_entries = Frame(self)
+            self.frame_entries.grid(column=0, row=0, padx=10, pady=5, sticky="e")
 
-        ###############################################################################################################
-        # Frame for MyEntries
-        self.frame_entries = Frame(self)
-        self.frame_entries.grid(column=0, row=0, padx=10, pady=5, sticky="e")
+            # Label and Entry 01 - salary [R$]
+            self.entry_01 = MyEntry(self.frame_entries, "Salário bruto R$", float)
+            self.entry_01.grid(column=0, row=0, sticky="e")
+            self.entry_01.entry.bind("<FocusOut>", self.update_msg)
 
-        # Label and Entry 01 - salary [R$]
-        self.entry_01 = MyEntry(self.frame_entries, "Salário bruto R$", float)
-        self.entry_01.grid(column=0, row=0, sticky="e")
-        self.entry_01.entry.bind("<FocusOut>", self.update_msg)
+            # Label and Entry 02 - dependents [qty]
+            self.entry_02 = MyEntry(self.frame_entries, "Dependentes", int)
+            self.entry_02.grid(column=0, row=1, sticky="e")
+            self.entry_02.entry.bind("<FocusOut>", self.update_msg)
 
-        # Label and Entry 02 - dependents [qty]
-        self.entry_02 = MyEntry(self.frame_entries, "Dependentes", int)
-        self.entry_02.grid(column=0, row=1, sticky="e")
-        self.entry_02.entry.bind("<FocusOut>", self.update_msg)
+            # Label and Entry 03 - pension percentage [%]
+            self.entry_03 = MyEntry(self.frame_entries, "Pensão [%]", float)
+            self.entry_03.grid(column=0, row=2, sticky="e")
+            self.entry_03.entry.bind("<FocusOut>", self.update_msg)
 
-        # Label and Entry 03 - pension percentage [%]
-        self.entry_03 = MyEntry(self.frame_entries, "Pensão [%]", float)
-        self.entry_03.grid(column=0, row=2, sticky="e")
-        self.entry_03.entry.bind("<FocusOut>", self.update_msg)
+            # Label and Entry 04 - other discounts [R$]
+            self.entry_04 = MyEntry(self.frame_entries, "Outros descontos R$", float)
+            self.entry_04.grid(column=0, row=3, sticky="e")
+            self.entry_04.entry.bind("<FocusOut>", self.update_msg)
 
-        # Label and Entry 04 - other discounts [R$]
-        self.entry_04 = MyEntry(self.frame_entries, "Outros descontos R$", float)
-        self.entry_04.grid(column=0, row=3, sticky="e")
-        self.entry_04.entry.bind("<FocusOut>", self.update_msg)
+            ###############################################################################################################
+            # Label for messages
+            self.lbl_msgs = Label(
+                self, justify="center", text="Dados carregados com sucesso!", foreground="blue", width=30, height=2
+            )
+            self.lbl_msgs.grid(column=0, row=1, pady=5, sticky="we")
 
-        ###############################################################################################################
-        # Label for messages
-        self.lbl_msgs = Label(
-            self, justify="center", text="Dados carregados com sucesso!", foreground="blue", width=30, height=2
-        )
-        self.lbl_msgs.grid(column=0, row=1, pady=5, sticky="we")
+            ###############################################################################################################
+            # Frame for report outside
+            self.frame_report_out = Frame(self, border=2, relief="groove")
+            self.frame_report_out.grid(column=0, row=2, padx=10, pady=5)
 
-        ###############################################################################################################
-        # Frame for report outside
-        self.frame_report_out = Frame(self, border=2, relief="groove")
-        self.frame_report_out.grid(column=0, row=2, padx=10, pady=5)
+            # Frame for report inside
+            self.frame_report_in = Frame(self.frame_report_out)
+            self.frame_report_in.grid(column=0, row=0, padx=15, pady=0)
 
-        # Frame for report inside
-        self.frame_report_in = Frame(self.frame_report_out)
-        self.frame_report_in.grid(column=0, row=0, padx=15, pady=0)
+            # Label report left side
+            self.lbl_report_01 = Label(self.frame_report_in, text=REPORT_TEXT, justify="left")
+            self.lbl_report_01.grid(column=0, row=0, padx=0, pady=0)
 
-        # Label report left side
-        self.lbl_report_01 = Label(self.frame_report_in, text=REPORT_TEXT, justify="left")
-        self.lbl_report_01.grid(column=0, row=0, padx=0, pady=0)
+            # Label report right side
+            self.lbl_report_02 = Label(self.frame_report_in, text=self.report(), justify="right")
+            self.lbl_report_02.grid(column=1, row=0, padx=0, pady=0)
 
-        # Label report right side
-        self.lbl_report_02 = Label(self.frame_report_in, text=self.report(), justify="right")
-        self.lbl_report_02.grid(column=1, row=0, padx=0, pady=0)
+            ###############################################################################################################
+            # Frame for buttons
+            self.frame_buttons = Frame(self)
+            self.frame_buttons.grid(column=0, row=3, padx=10, pady=10)
 
-        ###############################################################################################################
-        # Frame for buttons
-        self.frame_buttons = Frame(self)
-        self.frame_buttons.grid(column=0, row=3, padx=10, pady=10)
+            # Button 01 - Save
+            self.btn_save = MyButton(self.frame_buttons, text="Salvar", command=self.save)
+            self.btn_save.grid(column=0, row=0, padx=1, pady=1, sticky="we")
 
-        # Button 01 - Save
-        self.btn_save = MyButton(self.frame_buttons, text="Salvar", command=self.save)
-        self.btn_save.grid(column=0, row=0, padx=1, pady=1, sticky="we")
+            # Button 02 - Clear
+            self.btn_clear = MyButton(self.frame_buttons, text="Limpar", command=self.clear)
+            self.btn_clear.grid(column=1, row=0, padx=1, pady=1, sticky="we")
 
-        # Button 02 - Clear
-        self.btn_clear = MyButton(self.frame_buttons, text="Limpar", command=self.clear)
-        self.btn_clear.grid(column=1, row=0, padx=1, pady=1, sticky="we")
+            # Button 03 - Calculate
+            self.btn_calculate = MyButton(self.frame_buttons, text="Calcular", command=self.calculate, width=30)
+            self.btn_calculate.grid(column=0, row=1, padx=1, pady=1, columnspan=2)
 
-        # Button 03 - Calculate
-        self.btn_calculate = MyButton(self.frame_buttons, text="Calcular", command=self.calculate, width=30)
-        self.btn_calculate.grid(column=0, row=1, padx=1, pady=1, columnspan=2)
-
-        # Loop window
-        self.mainloop()
+            # Loop window
+            self.mainloop()
 
     def save(self) -> None:
         file_name = filedialog.asksaveasfilename(
