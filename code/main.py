@@ -204,7 +204,7 @@ class Window(Tk):
         self.entry_02.clear()
         self.entry_03.clear()
         self.entry_04.clear()
-        self.lbl_msgs.configure(text="")
+        self.lbl_msgs.configure(text="Dados carregados com sucesso!", foreground="blue")
         self.calculate()
 
     def calculate(self) -> None:
@@ -252,7 +252,7 @@ class Window(Tk):
                 self.lbl_msgs.configure(text=info[1], foreground="red")
                 break
             else:
-                self.lbl_msgs.configure(text="")
+                self.lbl_msgs.configure(text="Dados carregados com sucesso!", foreground="blue")
 
 
 if __name__ == "__main__":
