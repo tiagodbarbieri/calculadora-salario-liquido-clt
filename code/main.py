@@ -111,7 +111,7 @@ class Window(Tk):
         else:
             # Main Window
             super().__init__()
-            self.title("Calculadora salário líquido CLT")
+            self.title("Calculadora CLT")
             self.resizable(False, False)
 
             ###############################################################################################################
