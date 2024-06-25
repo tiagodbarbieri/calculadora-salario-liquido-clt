@@ -106,7 +106,7 @@ class Window(Tk):
             self.engine = Calculator()
         except:
             messagebox.showerror(
-                "Erro!", "O website www.gov.br não está acessível, verifique sua internet e reinicie a aplicação!"
+                "ERRO FATAL!", "O website www.gov.br não está acessível, verifique sua internet e reinicie a aplicação!"
             )
         else:
             # Main Window
