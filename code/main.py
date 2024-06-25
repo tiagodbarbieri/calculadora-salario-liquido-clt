@@ -205,6 +205,7 @@ class Window(Tk):
         self.entry_03.clear()
         self.entry_04.clear()
         self.lbl_msgs.configure(text="")
+        self.calculate()
 
     def calculate(self) -> None:
         if self.validate():
