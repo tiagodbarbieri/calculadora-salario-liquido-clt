@@ -1,15 +1,14 @@
 from engine import Calculator
 from re import compile
-
 from tkinter import filedialog
 from tkinter import Button
 from tkinter import Entry
 from tkinter import Frame
 from tkinter import Label
 from tkinter import messagebox
+from tkinter import PhotoImage
 from tkinter import Tk
-
-# from tkinter import ttk
+import platform
 
 # Regular expression for integer numbers
 INT_PATTERN = compile(r"^[0-9]+$")
@@ -26,6 +25,7 @@ Outros descontos:.....R$
 Total de descontos:...R$
 Salário Líquido:..........R$
 """
+BG_COLOR = "grey50"
 
 
 class MyButton(Button):
@@ -79,7 +79,7 @@ class MyEntry(Frame):
         elif FLOAT_PATTERN.match(value.strip()):
             return self.fill_variables(float(value.strip().replace(",", ".")))
         else:
-            return self.fill_variables(msg="Este número é inválido!", status=False)
+            return self.fill_variables(msg="Número inválido!", status=False)
 
     def fill_variables(self, value=0, msg="", status=True) -> bool:
         self.value = value
@@ -104,7 +104,7 @@ class Window(Tk):
         try:
             # Creating calculator
             self.engine = Calculator()
-        except:
+        except Exception:
             messagebox.showerror(
                 "ERRO FATAL!", "O website www.gov.br não está acessível, verifique sua internet e reinicie a aplicação!"
             )
@@ -113,6 +113,15 @@ class Window(Tk):
             super().__init__()
             self.title("Calculadora CLT")
             self.resizable(False, False)
+            self["background"] = BG_COLOR
+
+            # Defining windows icon
+            if platform.system() == "Windows":
+                self.iconbitmap(file="code/images/icon.ico")
+            elif platform.system() == "Linux":
+                large_icon = PhotoImage(file="code/images/icon_32x32.png")
+                small_icon = PhotoImage(file="code/images/icon_16x16.png")
+                self.iconphoto(False, large_icon, small_icon)
 
             ###########################################################################################################
             # Frame for MyEntries
@@ -141,9 +150,7 @@ class Window(Tk):
 
             ###########################################################################################################
             # Label for messages
-            self.lbl_msgs = Label(
-                self, justify="center", text="Dados carregados com sucesso!", foreground="blue", width=30, height=2
-            )
+            self.lbl_msgs = Label(self, justify="center", text="Dados carregados com sucesso!", fg="blue", height=2)
             self.lbl_msgs.grid(column=0, row=1, pady=5, sticky="we")
 
             ###########################################################################################################
