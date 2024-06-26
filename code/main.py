@@ -121,7 +121,7 @@ class Window(Tk):
                 small_icon = PhotoImage(file="code/images/icon_16x16.png")
                 self.iconphoto(False, large_icon, small_icon)
 
-            ###########################################################################################################
+            # === Entries =============================================================================================
             # Frame for MyEntries
             self.frame_entries = Frame(self)
             self.frame_entries.grid(column=0, row=0, padx=10, pady=5, sticky="e")
@@ -146,12 +146,12 @@ class Window(Tk):
             self.entry_04.grid(column=0, row=3, sticky="e")
             self.entry_04.entry.bind("<FocusOut>", self.update_msg)
 
-            ###########################################################################################################
+            # === Messages ============================================================================================
             # Label for messages
             self.lbl_msgs = Label(self, justify="center", text="Dados carregados com sucesso!", fg="blue", height=2)
             self.lbl_msgs.grid(column=0, row=1, pady=5, sticky="we")
 
-            ###########################################################################################################
+            # === Report =============================================================================================+
             # Frame for report outside
             self.frame_report_out = Frame(self, border=2, relief="groove")
             self.frame_report_out.grid(column=0, row=2, padx=10, pady=5)
@@ -168,7 +168,7 @@ class Window(Tk):
             self.lbl_report_02 = Label(self.frame_report_in, text=self.report(), justify="right")
             self.lbl_report_02.grid(column=1, row=0, padx=0, pady=0)
 
-            ###########################################################################################################
+            # === Buttons =============================================================================================
             # Frame for buttons
             self.frame_buttons = Frame(self)
             self.frame_buttons.grid(column=0, row=3, padx=10, pady=10)
