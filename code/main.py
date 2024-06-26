@@ -115,7 +115,7 @@ class Window(Tk):
 
             # Defining windows icon
             if platform.system() == "Windows":
-                self.iconbitmap(file="code/images/icon.ico")
+                self.iconbitmap(bitmap="code/images/icon.ico")
             elif platform.system() == "Linux":
                 large_icon = PhotoImage(file="code/images/icon_32x32.png")
                 small_icon = PhotoImage(file="code/images/icon_16x16.png")
