@@ -25,7 +25,6 @@ Outros descontos:.....R$
 Total de descontos:...R$
 Salário Líquido:..........R$
 """
-BG_COLOR = "grey50"
 
 
 class MyButton(Button):
@@ -113,7 +112,6 @@ class Window(Tk):
             super().__init__()
             self.title("Calculadora CLT")
             self.resizable(False, False)
-            self["background"] = BG_COLOR
 
             # Defining windows icon
             if platform.system() == "Windows":
