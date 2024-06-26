@@ -9,14 +9,14 @@ Os valores para cálculo  de *[IRPF](https://www.gov.br/receitafederal/pt-br/ass
 
 1. Inserir dados do trabalhador e clicar em calcular.
    
-   <img src="./code/images/image_01.png" title="type data" alt="image 01" style="zoom:80%;">
+   <img src="./code/images/image_01.png" title="type data" alt="image 01" style="zoom:60%;">
 
 2. A calculadora possui um sistema de validação de dados. Caso o usuário tenha escrito algo **errado** será avisado disso.
    
-   <img src="./code/images/image_02.png" title="type validation" alt="image 02" style="zoom:80%;">
+   <img src="./code/images/image_02.png" title="type validation" alt="image 02" style="zoom:60%;">
 
 3. Caso o usuário quiser, é possível gerar um relatório em formato .txt clicando em salvar.
-   <img src="./code/images/image_03.png" title="report" alt="image 03" style="zoom:80%;"> 
+   <img src="./code/images/image_03.png" title="report" alt="image 03" style="zoom:60%;"> 
 
 ---
 
