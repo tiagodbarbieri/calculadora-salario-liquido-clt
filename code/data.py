@@ -55,7 +55,7 @@ class TableParser(HTMLParser):
         if self.table and self.row and self.cell:
             self.table_row.append(data)
 
-    def __str__(self):
+    def __str__(self) -> None:
         for table in self.all_tables:
             for row in table:
                 print(row)
