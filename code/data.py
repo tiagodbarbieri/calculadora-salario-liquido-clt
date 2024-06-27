@@ -3,6 +3,7 @@ from datetime import datetime
 from html.parser import HTMLParser
 from urllib.request import urlopen
 
+# Get the current year
 year = str(datetime.today().year)
 
 # INSS and IRPF tables from website: www.gov.br
@@ -11,7 +12,11 @@ IRPF_SOURCE = "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-r
 
 
 class TableParser(HTMLParser):
-    def __init__(self):
+    """Extract tables from a web page."""
+
+    def __init__(self) -> None:
+        """Initialize this class."""
+
         super().__init__()
         self.table = False
         self.row = False
@@ -20,7 +25,9 @@ class TableParser(HTMLParser):
         self.this_table = []
         self.table_row = []
 
-    def handle_starttag(self, tag, attrs):
+    def handle_starttag(self, tag: str, attrs) -> None:
+        """Verify if the parser is at the beginning of the tags."""
+
         if tag == "table":
             self.table = True
         elif tag == "tr":
@@ -28,7 +35,9 @@ class TableParser(HTMLParser):
         elif tag == "td":
             self.cell = True
 
-    def handle_endtag(self, tag):
+    def handle_endtag(self, tag: str) -> None:
+        """Verify if the parser is at the end of the tags, and append data that was found."""
+
         if tag == "table":
             self.table = False
             self.all_tables.append(self.this_table)
@@ -40,7 +49,9 @@ class TableParser(HTMLParser):
         elif tag == "td":
             self.cell = False
 
-    def handle_data(self, data):
+    def handle_data(self, data: str) -> None:
+        """Get the data inside the 'cells'."""
+
         if self.table and self.row and self.cell:
             self.table_row.append(data)
 
@@ -53,22 +64,32 @@ class TableParser(HTMLParser):
 
 
 class DepParser(HTMLParser):
-    def __init__(self):
+    """Extract dependent value from a web page."""
+
+    def __init__(self) -> None:
+        """Initialize this class."""
+
         super().__init__()
         self.dep = False
         self.value = 0.0
 
-    def handle_starttag(self, tag, attrs):
+    def handle_starttag(self, tag: str, attrs) -> None:
+        """Verify if the parser is at the beginning of the tag 'span'."""
+
         if tag == "span":
             for attr in attrs:
                 if attr[1] == "discreet":
                     self.dep = True
 
-    def handle_endtag(self, tag):
+    def handle_endtag(self, tag: str) -> None:
+        """Verify if the parser is at the end of the tag 'span'."""
+
         if tag == "span":
             self.dep = False
 
-    def handle_data(self, data):
+    def handle_data(self, data: str) -> None:
+        """Get the data inside between the tags 'span'."""
+
         if self.dep:
             if "Dedução mensal por dependente:" in data:
                 pos = data.find("$") + 1
@@ -78,18 +99,27 @@ class DepParser(HTMLParser):
 
 
 class INSS:
-    def __init__(self, html_page=INSS_SOURCE):
+    """Create INSS data table."""
+
+    def __init__(self, html_page=INSS_SOURCE) -> None:
+        """Initialize this class."""
+
         self.html = self.get_source(html_page)
         self.parser = TableParser()
         self.parser.feed(self.html)
+        self.parser.close()
         self.table = self.extract_data(self.parser.all_tables[0])
 
-    def get_source(self, url):
+    def get_source(self, url: str) -> str:
+        """Get source from a webpage."""
+
         response = urlopen(url)
         html = response.read()
         return html.decode("utf-8")
 
-    def extract_data(self, table):
+    def extract_data(self, table: list) -> list:
+        """Extract data from a table and return a new table with the correct data."""
+
         tb = []
         for row in range(1, len(table)):
             rw = []
@@ -102,7 +132,9 @@ class INSS:
                 tb.append(rw)
         return tb
 
-    def get_elements(self, row, elements_list: list):
+    def get_elements(self, row: list, elements_list: list) -> None:
+        """Get the numeric value inside each cell and append it in the new row."""
+
         for cell in row:
             s = str(cell)
             s = s.strip()
@@ -119,10 +151,16 @@ class INSS:
 
 
 class IRPF(INSS):
-    def __init__(self):
+    """Create IRPF data table."""
+
+    def __init__(self) -> None:
+        """Initialize this class."""
+
         super().__init__(html_page=IRPF_SOURCE)
 
-    def extract_data(self, table):
+    def extract_data(self, table: list) -> list:
+        """Extract data from a table and return a new table with the correct data."""
+
         tb = []
         for row in range(0, len(table)):
             rw = []
@@ -143,13 +181,20 @@ class IRPF(INSS):
 
 
 class DEP:
-    def __init__(self, html_page=IRPF_SOURCE):
+    """Create a DEP (dependent) class."""
+
+    def __init__(self, html_page=IRPF_SOURCE) -> None:
+        """Initialize this class."""
+
         self.html = self.get_source(html_page)
         self.parser = DepParser()
         self.parser.feed(self.html)
+        self.parser.close()
         self.value = self.parser.value
 
-    def get_source(self, url):
+    def get_source(self, url: str) -> str:
+        """Get source from a webpage."""
+
         response = urlopen(url)
         html = response.read()
         return html.decode("utf-8")
