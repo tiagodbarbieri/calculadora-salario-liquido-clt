@@ -2,7 +2,11 @@ from data import INSS, IRPF, DEP
 
 
 class Calculator:
-    def __init__(self, salary=0.0, dependents=0, pension_percentage=0.0, other_discounts=0.0):
+    """Create the calculator, the project's core."""
+
+    def __init__(self, salary=0.0, dependents=0, pension_percentage=0.0, other_discounts=0.0) -> None:
+        """Initialize this class."""
+
         # Inputs
         self.salary: float = salary
         self.dependents: int = dependents
@@ -24,7 +28,9 @@ class Calculator:
         # Calculations
         self.calculate()
 
-    def calculate(self):
+    def calculate(self) -> None:
+        """Start the calculations."""
+
         # Initializing variables
         self.pension_value = 0.0
         self.irpf_value = 0.0
@@ -37,7 +43,9 @@ class Calculator:
         self.total_discounts = self.inss_value + self.irpf_value + self.pension_value + self.other_discounts
         self.net_salary = self.salary - self.total_discounts
 
-    def inss_calculation(self):
+    def inss_calculation(self) -> float:
+        """Calculate the INSS."""
+
         inss = 0.0
         for line in self.inss_table:
             if self.salary >= line[0] and self.salary <= line[1]:
@@ -47,14 +55,18 @@ class Calculator:
                 inss += (line[1] - line[0]) * (line[2] / 100)
         return inss
 
-    def loop_calculation(self):
+    def loop_calculation(self) -> None:
+        """Start a loop calculation to stabilize the IRPF and pension value."""
+
         for v in range(0, 10):
             irpf = self.irpf_calculation()
             parcial_net_salary = self.salary - self.inss_value - irpf
             self.pension_value = parcial_net_salary * (self.pension_percentage / 100)
             self.irpf_value = irpf
 
-    def irpf_calculation(self):
+    def irpf_calculation(self) -> float:
+        """Calculate the IRPF."""
+
         base_salary = self.salary - self.inss_value - (self.dependents * self.dependent_value) - self.pension_value
         if base_salary > 0:
             for line in self.irpf_table:
