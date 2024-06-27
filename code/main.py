@@ -28,16 +28,25 @@ Salário Líquido:..........R$
 
 
 class MyButton(Button):
-    def __init__(self, master, text=None, width=None, command=None):
+    """Button that get the focus when it is clicked."""
+
+    def __init__(self, master, text: str, width: int = 0, command=None) -> None:
+        """Initialize this class."""
+
         super().__init__(master=master, text=text, width=width, command=command)
         self.bind("<Button-1>", self.focus_in)
 
-    def focus_in(self, event):
+    def focus_in(self, event) -> None:
+        """Get the focus when the button is clicked."""
         self.focus()
 
 
 class MyEntry(Frame):
-    def __init__(self, master, text, type: int | float):
+    """Joint of Label and Entry widgets in a Frame widget."""
+
+    def __init__(self, master, text: str, type: str) -> None:
+        """Initialize this class."""
+
         super().__init__(master=master)
         self.type = type
         self.value: int | float = 0
@@ -59,12 +68,16 @@ class MyEntry(Frame):
         self.entry.grid(column=1, row=0)
 
     def function_select(self) -> bool:
-        if self.type == int:
+        """Select the functions check_int or check_float."""
+
+        if self.type == "int":
             return self.check_int(self.entry.get())
-        elif self.type == float:
+        elif self.type == "float":
             return self.check_float(self.entry.get())
 
     def check_int(self, value: str) -> bool:
+        """Check if the value is integer."""
+
         if value == "":
             return self.fill_variables()
         elif INT_PATTERN.match(value.strip()):
@@ -73,6 +86,8 @@ class MyEntry(Frame):
             return self.fill_variables(msg="O número deve ser inteiro!", status=False)
 
     def check_float(self, value: str) -> bool:
+        """Check if the value is float."""
+
         if value == "":
             return self.fill_variables()
         elif FLOAT_PATTERN.match(value.strip()):
@@ -81,6 +96,8 @@ class MyEntry(Frame):
             return self.fill_variables(msg="Número inválido!", status=False)
 
     def fill_variables(self, value=0, msg="", status=True) -> bool:
+        """Fill the variables with given values and configure the Entry widget."""
+
         self.value = value
         self.msg = msg
         self.status = status
@@ -91,6 +108,8 @@ class MyEntry(Frame):
         return status
 
     def clear(self) -> None:
+        """Clear the Entry widget."""
+
         self.value = 0
         self.msg = ""
         self.status = True
@@ -99,7 +118,12 @@ class MyEntry(Frame):
 
 
 class Window(Tk):
-    def __init__(self):
+    """The application's interface."""
+
+    def __init__(self) -> None:
+        """Initialize this class."""
+
+        # Verifying the internet connection
         try:
             # Creating calculator
             self.engine = Calculator()
@@ -127,22 +151,22 @@ class Window(Tk):
             self.frame_entries.grid(column=0, row=0, padx=10, pady=5, sticky="e")
 
             # Label and Entry 01 - salary [R$]
-            self.entry_01 = MyEntry(self.frame_entries, "Salário bruto R$", float)
+            self.entry_01 = MyEntry(self.frame_entries, "Salário bruto R$", "float")
             self.entry_01.grid(column=0, row=0, sticky="e")
             self.entry_01.entry.bind("<FocusOut>", self.update_msg)
 
             # Label and Entry 02 - dependents [qty]
-            self.entry_02 = MyEntry(self.frame_entries, "Dependentes", int)
+            self.entry_02 = MyEntry(self.frame_entries, "Dependentes", "int")
             self.entry_02.grid(column=0, row=1, sticky="e")
             self.entry_02.entry.bind("<FocusOut>", self.update_msg)
 
             # Label and Entry 03 - pension percentage [%]
-            self.entry_03 = MyEntry(self.frame_entries, "Pensão [%]", float)
+            self.entry_03 = MyEntry(self.frame_entries, "Pensão [%]", "float")
             self.entry_03.grid(column=0, row=2, sticky="e")
             self.entry_03.entry.bind("<FocusOut>", self.update_msg)
 
             # Label and Entry 04 - other discounts [R$]
-            self.entry_04 = MyEntry(self.frame_entries, "Outros descontos R$", float)
+            self.entry_04 = MyEntry(self.frame_entries, "Outros descontos R$", "float")
             self.entry_04.grid(column=0, row=3, sticky="e")
             self.entry_04.entry.bind("<FocusOut>", self.update_msg)
 
@@ -189,6 +213,8 @@ class Window(Tk):
             self.mainloop()
 
     def save(self) -> None:
+        """Save .txt report."""
+
         file_name = filedialog.asksaveasfilename(
             defaultextension=".txt", title="Salvar como", filetypes=(("Text Files", "*.txt"), ("All Files", "*.*"))
         )
@@ -210,7 +236,9 @@ class Window(Tk):
                 for line in report:
                     r.write(line)
 
-    def clear(self):
+    def clear(self) -> None:
+        """Clear the MyEntries."""
+
         self.entry_01.clear()
         self.entry_02.clear()
         self.entry_03.clear()
@@ -219,6 +247,8 @@ class Window(Tk):
         self.calculate()
 
     def calculate(self) -> None:
+        """Calculate the values after verification."""
+
         if self.validate():
             # Input values
             self.engine.salary = self.entry_01.value
@@ -230,6 +260,8 @@ class Window(Tk):
             self.lbl_report_02.configure(text=self.report())
 
     def validate(self) -> bool:
+        """Validate the values of MyEntry."""
+
         status = []
         status.append(self.entry_01.status)
         status.append(self.entry_02.status)
@@ -241,6 +273,8 @@ class Window(Tk):
         return True
 
     def report(self) -> str:
+        """Generate the report information in the window's application."""
+
         # fmt: off
         t1 = (f"{self.engine.inss_value:.2f}\n")
         t2 = (f"{self.engine.irpf_value:.2f}\n")
@@ -253,6 +287,8 @@ class Window(Tk):
         return t1 + t2 + t3 + t4 + t5 + t6 + t7
 
     def update_msg(self, event) -> None:
+        """Update the message in the window's application."""
+
         data = []
         data.append((self.entry_01.status, self.entry_01.msg))
         data.append((self.entry_02.status, self.entry_02.msg))
