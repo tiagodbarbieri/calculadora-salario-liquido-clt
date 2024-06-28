@@ -30,7 +30,7 @@ Salário Líquido:..........R$
 class MyButton(Button):
     """Button that get the focus when it is clicked."""
 
-    def __init__(self, master, text: str, width: int = 0, command=None) -> None:
+    def __init__(self, master, text: str, width: int = 0, command=any) -> None:
         """Initialize this class."""
 
         super().__init__(master=master, text=text, width=width, command=command)
@@ -95,7 +95,7 @@ class MyEntry(Frame):
         else:
             return self.fill_variables(msg="Número inválido!", status=False)
 
-    def fill_variables(self, value=0, msg="", status=True) -> bool:
+    def fill_variables(self, value: int | float = 0, msg: str = "", status: bool = True) -> bool:
         """Fill the variables with given values and configure the Entry widget."""
 
         self.value = value
@@ -252,7 +252,7 @@ class Window(Tk):
         if self.validate():
             # Input values
             self.engine.salary = self.entry_01.value
-            self.engine.dependents = self.entry_02.value
+            self.engine.dependents = int(self.entry_02.value)
             self.engine.pension_percentage = self.entry_03.value
             self.engine.other_discounts = self.entry_04.value
             # Start calculation
