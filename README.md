@@ -26,4 +26,16 @@ Os valores para cálculo  de *[IRPF](https://www.gov.br/receitafederal/pt-br/ass
 
 ---
 
+### Para criar um executável com pyinstaller:
+
+No Windows:
+
+```pyinstaller --onefile --windowed --add-data ".\code\images;images" ".\code\main.py"```
+
+No Linux:
+
+```pyinstaller --onefile --windowed --add-data ".\code\images:images" ".\code\main.py"```
+
+---
+
 <img src="./code/images/icon_16x16.png" title="icon 16x16" alt="icon 16x16" style="zoom:150%;"> *This icon was made by Uniconlabs from www.flaticon.com*
