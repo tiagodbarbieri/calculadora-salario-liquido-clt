@@ -9,6 +9,7 @@ from tkinter import messagebox
 from tkinter import PhotoImage
 from tkinter import Tk
 import platform
+import os
 
 # Regular expression for integer numbers
 INT_PATTERN = compile(r"^[0-9]+$")
@@ -138,8 +139,9 @@ class Window(Tk):
             self.resizable(False, False)
 
             # Defining windows icon
+            main_path = os.path.dirname(__file__)  # directory path of main.py
             if platform.system() == "Windows":
-                self.iconbitmap(bitmap="code/images/icon.ico")
+                self.iconbitmap(bitmap=os.path.join(main_path, r"images\icon.ico"))
             elif platform.system() == "Linux":
                 large_icon = PhotoImage(file="code/images/icon_32x32.png")
                 small_icon = PhotoImage(file="code/images/icon_16x16.png")
