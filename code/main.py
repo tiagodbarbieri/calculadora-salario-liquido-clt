@@ -143,8 +143,8 @@ class Window(Tk):
             if platform.system() == "Windows":
                 self.iconbitmap(bitmap=os.path.join(main_path, r"images\icon.ico"))
             elif platform.system() == "Linux":
-                large_icon = PhotoImage(file="code/images/icon_32x32.png")
-                small_icon = PhotoImage(file="code/images/icon_16x16.png")
+                large_icon = PhotoImage(file=os.path.join(main_path, "images/icon_32x32.png"))
+                small_icon = PhotoImage(file=os.path.join(main_path, "images/icon_32x32.png"))
                 self.iconphoto(False, large_icon, small_icon)
 
             # === Entries =============================================================================================
