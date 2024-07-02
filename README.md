@@ -34,7 +34,7 @@ No Windows:
 
 No Linux:
 
-```pyinstaller --onefile --windowed --add-data ".\code\images:images" ".\code\main.py"```
+```pyinstaller --onefile --windowed --add-data "./code/images:images" "./code/main.py"```
 
 ---
 
