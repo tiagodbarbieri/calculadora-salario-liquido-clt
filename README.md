@@ -30,11 +30,11 @@ Os valores para cálculo  de *[IRPF](https://www.gov.br/receitafederal/pt-br/ass
 
 No Windows:
 
-```pyinstaller --onefile --windowed --add-data ".\code\images;images" ".\code\main.py"```
+```pyinstaller --onefile --windowed --icon=".\code\images\icon.ico" --add-data ".\code\images;images" ".\code\main.py"```
 
 No Linux:
 
-```pyinstaller --onefile --windowed --add-data "./code/images:images" "./code/main.py"```
+```pyinstaller --onefile --windowed --icon="./code/images/icon_32x32.png" --add-data "./code/images:images" "./code/main.py"```
 
 ---
 
