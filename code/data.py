@@ -4,11 +4,27 @@ from html.parser import HTMLParser
 from urllib.request import urlopen
 
 # Get the current year
-year = str(datetime.today().year)
+year = datetime.today().year
 
 # INSS and IRPF tables from website: www.gov.br
 INSS_SOURCE = "https://www.gov.br/inss/pt-br/direitos-e-deveres/inscricao-e-contribuicao/tabela-de-contribuicao-mensal"
-IRPF_SOURCE = "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas/" + year
+
+
+def IRPF_SOURCE() -> str:
+    """Function to verify the connection with the correct website."""
+
+    url_01 = "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas/" + str(year)
+    url_02 = "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas/" + str(year - 1)
+
+    try:
+        urlopen(url_01)
+        return url_01
+    except Exception:
+        try:
+            urlopen(url_02)
+            return url_02
+        except Exception:
+            return ""
 
 
 class TableParser(HTMLParser):
@@ -156,7 +172,7 @@ class IRPF(INSS):
     def __init__(self) -> None:
         """Initialize this class."""
 
-        super().__init__(html_page=IRPF_SOURCE)
+        super().__init__(html_page=IRPF_SOURCE())
 
     def extract_data(self, table: list) -> list:
         """Extract data from a table and return a new table with the correct data."""
@@ -183,7 +199,7 @@ class IRPF(INSS):
 class DEP:
     """Create a DEP (dependent) class."""
 
-    def __init__(self, html_page=IRPF_SOURCE) -> None:
+    def __init__(self, html_page=IRPF_SOURCE()) -> None:
         """Initialize this class."""
 
         self.html = self.get_source(html_page)
